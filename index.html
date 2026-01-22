@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Video Player</title>
+    <style>
+        /* Centering and styling for background and fonts */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e9ecef;
+            font-family: Arial, sans-serif;
+        }
+        /* Video container styling */
+        #video-container {
+            width: 650px;
+            max-width: 90%;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 10px;
+            position: relative;
+        }
+        /* Styling the video */
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        /* Controls container */
+        #controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+        /* General button styling */
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        /* Disabled button styling */
+        .button:disabled {
+            background-color: #b0b0b0;
+            cursor: not-allowed;
+        }
+        /* Hover effect for buttons */
+        .button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        /* Time display styling */
+        #timeDisplay {
+            font-size: 15px;
+            font-weight: bold;
+            color: #100f0f;
+            background-color: #f1f3f5;
+            padding: 5px 10px;
+            border-radius: 20px;
+            width: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="video-container">
+    <video id="myVideo" src="DRIVER SAFETY OVERVIEW.mp4"></video>
+    <div id="controls">
+        <button id="playPauseBtn" class="button">Play</button>
+        <span id="timeDisplay">0:00 / 0:00</span>
+        <button id="replayBtn" class="button">Replay</button>
+        <button id="fullscreenBtn" class="button">Fullscreen</button>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById("myVideo");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const timeDisplay = document.getElementById("timeDisplay");
+    const replayBtn = document.getElementById("replayBtn");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const videoContainer = document.getElementById("video-container");
+    const controls = document.getElementById("controls");
+
+    // Update time display format
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    // Update the time display
+    function updateTimeDisplay() {
+        timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+    }
+
+    // Play or pause the video
+    playPauseBtn.addEventListener("click", () => {
+        if (video.paused || video.ended) {
+            video.play();
+            playPauseBtn.textContent = "Pause";
+        } else {
+            video.pause();
+            playPauseBtn.textContent = "Play";
+        }
+    });
+
+    // Replay the video from the beginning
+    replayBtn.addEventListener("click", () => {
+        video.currentTime = 0;
+        video.play();
+        playPauseBtn.textContent = "Pause";
+    });
+
+    // Update button and time when video ends
+    video.addEventListener("ended", () => {
+        playPauseBtn.textContent = "Play";
+    });
+
+    // Update time display as video plays
+    video.addEventListener("timeupdate", updateTimeDisplay);
+
+    // Update duration display once metadata is loaded
+    video.addEventListener("loadedmetadata", updateTimeDisplay);
+
+    // Toggle fullscreen mode
+    fullscreenBtn.addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+            videoContainer.requestFullscreen().catch(err => {
+                alert(`Error attempting to enable fullscreen mode: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    });
+
+    // Show controls when entering fullscreen and update fullscreen button text
+    document.addEventListener("fullscreenchange", () => {
+        if (document.fullscreenElement) {
+            controls.style.display = "flex"; // Show controls in fullscreen
+            fullscreenBtn.textContent = "Exit Fullscreen";
+        } else {
+            controls.style.display = "flex"; // Keep controls displayed
+            fullscreenBtn.textContent = "Fullscreen";
+        }
+    });
+</script>
+
+</body>
+</html> 
